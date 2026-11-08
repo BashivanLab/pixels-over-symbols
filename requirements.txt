@@ -1,0 +1,20 @@
+# Versions the paper's analyses ran with (Python 3.13); numpy 1.26.4 has wheels up to Python 3.12.
+torch==2.8.0
+torchvision==0.23.0
+timm==1.0.24
+transformers==4.57.3
+huggingface_hub==0.36.0
+safetensors==0.7.0
+numpy==1.26.4
+scipy==1.16.2
+pandas==2.3.3
+scikit-learn==1.5.2
+matplotlib==3.10.6
+seaborn==0.13.2
+Pillow==11.3.0
+psutil==7.1.0
+wandb==0.21.4
+dsa-metric==2.0.1
+POT==0.9.6.post1
+pydmd==2025.8.1
+omegaconf==2.3.0
