@@ -1,13 +1,62 @@
+<div align="center">
+
 # Pixels over Symbols
 
-Code for "Pixels over Symbols: Sensory Realism Improves Behavioral Alignment in Models of Cognition" (NeurIPS 2026), by Hao Yuan Bai, Xiaoxuan Lei, Zihan Weng, Motahareh Pourrahimi, Lucas Gomez and Pouya Bashivan.
+### Sensory Realism Improves Behavioral Alignment in Models of Cognition
 
-We train recurrent and transformer models on 43 visual working-memory tasks (n-back, delayed match-to-sample and two compositional variants) built from the HvM object images.
-Abstract models see a one-hot description of each stimulus, Natural models see the features of a frozen pretrained vision encoder, and both are compared with human participants and vision-language models on the same 960 trials of 12 tasks.
-This repository has the code to train every model in the paper, evaluate them on those trials, and redraw the figures and statistics.
+**Hao Yuan Bai, Xiaoxuan Lei, Zihan Weng, Motahareh Pourrahimi, Lucas Gomez, Pouya Bashivan**
 
-The data (de-identified human responses, VLM responses, trial lists, trained checkpoints and cached evaluations) is on Hugging Face at [rdh1115/pixels-over-symbols](https://huggingface.co/datasets/rdh1115/pixels-over-symbols).
-The PsychoJS experiment we ran on Amazon Mechanical Turk is at [rdh1115/abs_nat_psychopy_mturk](https://github.com/rdh1115/abs_nat_psychopy_mturk).
+[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS-2026-4b44ce.svg)](https://neurips.cc/virtual/2026/poster/153571)
+[![arXiv](https://img.shields.io/badge/arXiv-2611.10565-b31b1b.svg)](https://arxiv.org/abs/2611.10565)
+[![Dataset on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-pixels--over--symbols-ffd21e.svg)](https://huggingface.co/datasets/rdh1115/pixels-over-symbols)
+[![Experiment](https://img.shields.io/badge/PsychoJS-experiment-2ea44f.svg)](https://github.com/rdh1115/abs_nat_psychopy_mturk)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
+</div>
+
+> **Do models of cognition need to see the world the way we do?**
+> We trained the same networks on the same working-memory tasks twice: once on tidy symbolic descriptions of each image, once on the images themselves.
+> The models that see images behave far more like people.
+
+## TL;DR
+
+Computational models of cognition usually replace real sensory input with clean symbolic vectors ("a car, on the left").
+We test whether that shortcut matters.
+**Abstract** models get a one-hot code of each stimulus, **Natural** models get the same tasks through a pretrained vision encoder, and both are compared trial by trial with **humans** and **vision-language models** on the same 960 trials.
+
+## Key findings
+
+- 🧠 **Images make models more human-like.** Natural models reproduce human trial-by-trial responses much more closely than Abstract ones, in all 18 task conditions, even though fully trained Abstract models are the more accurate ones.
+- 🔁 **The recurrent weights are not the culprit.** An Abstract-trained core, frozen and driven by image features, recovers the human consistency of a Natural model, with dynamics within the seed-to-seed spread of Natural models.
+- 🤖 **Strong VLMs are not the most human-like.** Vision-language models match or beat human accuracy, yet most task-trained Natural models reproduce the human pattern of responses better.
+- 📏 **What matters, and what doesn't.** Sensory realism moves human alignment more than the choice of sequence architecture and about as much as the choice of vision encoder, while a bigger encoder barely helps.
+- 🚧 **Room to grow.** Even the best model stays well below the consistency between humans.
+
+The takeaway for neuroscience: conclusions drawn from abstract task models deserve a second look.
+
+## What's in this repo
+
+Everything needed to go from the tasks to the paper's figures:
+
+- 🏋️ **Train** every model in the paper (Abstract, Natural, dimensionality-matched and core-substitution models) on 43 n-back and delayed match-to-sample tasks built from the HvM object images.
+- 📊 **Evaluate** them on the human trials and measure behavioral consistency, RSA and error consistency.
+- 🌀 **Compare their dynamics** with Dynamical Similarity Analysis (DSA).
+- 🖼️ **Redraw** every data figure and statistic of the paper from the released data, in a few minutes on a CPU.
+
+The data (de-identified human responses, VLM responses, trial lists, trained checkpoints and cached evaluations) is on Hugging Face at [rdh1115/pixels-over-symbols](https://huggingface.co/datasets/rdh1115/pixels-over-symbols), and the browser experiment we ran on Amazon Mechanical Turk is at [rdh1115/abs_nat_psychopy_mturk](https://github.com/rdh1115/abs_nat_psychopy_mturk).
+
+## Quick start
+
+Redraw the paper's figures:
+
+```bash
+conda create -n pixels python=3.12 && conda activate pixels
+pip install -r requirements.txt
+hf download rdh1115/pixels-over-symbols --repo-type dataset --local-dir data
+bash scripts/figures/make_all.sh   # panels go to figures/
+```
+
+The sections below explain each step, and how to evaluate and train the models.
 
 ## Setup
 
@@ -69,6 +118,9 @@ redraws every data figure of the paper from `data/evaluations` in a few minutes 
 The panels go to `figures/`, and the numbers the text quotes are printed in `figures/logs/`.
 The RSA results depend on Python's hash seed, so the scripts insist on `PYTHONHASHSEED=0` (`make_all.sh` sets it).
 
+<details>
+<summary>Which file is which figure</summary>
+
 | Figure | Files under `figures/` |
 |---|---|
 | 2 | `seq_type/{correlation,accuracy,legend}.png` |
@@ -91,6 +143,8 @@ The RSA results depend on Python's hash seed, so the scripts insist on `PYTHONHA
 | 24 | `dsa/final/{heatmap,mds}_{pre,seq}_pc50.png` |
 
 Figure 1 and the stimulus and task illustrations (Figures 5 to 9) were made by hand.
+
+</details>
 
 ## Statistics
 
@@ -157,10 +211,15 @@ scripts/train/abstract.sh lstm 128 0 until080
 CUDA_VISIBLE_DEVICES=0 scripts/train/abs_to_nat.sh m80 wout 0
 ```
 
+<details>
+<summary>Provenance of the 0.80-matched checkpoints</summary>
+
 Not every 0.80-matched checkpoint comes from an `until080` rerun.
 A seed was rerun only when its original run had no epoch-0 checkpoint labelled 0.80; otherwise the paper used that checkpoint of the original run.
 These 23 checkpoints (19 in `abstract_until080`, 4 in `nat_to_abs_until080`) keep the two-decimal name of the original run (`RNN_model_acc0.80_epoch_0_batch_<N>.pth`) and come with its training log, while the rerun checkpoints have four decimals (`acc0.8012`).
 To retrain one of them, use the launcher's regular mode (`abstract.sh` without `until080`, `nat_to_abs.sh` with recipient `onehot`) and take the epoch-0 checkpoint labelled 0.80: `until080` checks the validation accuracy more often near 0.80 and can select a different checkpoint, which for LSTM seeds 3 and 4 would also change the `m80` donor of `abs_to_nat.sh`.
+
+</details>
 
 Training is only bitwise reproducible on the same hardware and software.
 Most Abstract, dimensionality-matched and Nat->Abs models of the paper were trained on CPUs and the rest on NVIDIA A5000, A100 and H100 GPUs; the training log in each run folder records its settings.
