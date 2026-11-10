@@ -8,7 +8,6 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2611.10565-b31b1b.svg)](https://arxiv.org/abs/2611.10565)
 [![Dataset on Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-pixels--over--symbols-ffd21e.svg)](https://huggingface.co/datasets/rdh1115/pixels-over-symbols)
 [![Experiment](https://img.shields.io/badge/PsychoJS-experiment-2ea44f.svg)](https://github.com/rdh1115/abs_nat_psychopy_mturk)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 </div>
 
@@ -21,7 +20,6 @@
 - [Reproducing the paper](#reproducing-the-paper)
 - [Repository layout](#repository-layout)
 - [Citation](#citation)
-- [License](#license)
 
 ## Summary
 
@@ -128,10 +126,13 @@ Each step has its own README; all commands run from the repository root.
 | `train_*.py`, `training_loop.py` | training |
 | `cache_image_embed.py` | frozen-encoder features |
 | `mturk/` | MTurk task definitions, participant and VLM responses |
-| [`analysis/`](analysis/README.md) | model registry, evaluation on the MTurk trials, behavioral metrics, DSA |
-| [`scripts/`](scripts/README.md) | launchers, evaluation, figures, statistics, MTurk stimuli and trial lists |
-| `assets/` | the schematic shown above |
-| `test/` | unit tests (`python -m unittest discover -s test`) |
+| `analysis/` | model registry, evaluation on the MTurk trials, behavioral metrics, DSA |
+| `scripts/` | launchers, evaluation, figures, statistics, MTurk stimuli and trial lists |
+
+## Acknowledgements
+
+We thank the Amazon Mechanical Turk participants who took part in our experiments, and the reviewers and area chair, whose feedback improved this paper.
+This research was enabled in part by computing resources provided by [Calcul Québec](https://www.calculquebec.ca) and the [Digital Research Alliance of Canada](https://alliancecan.ca).
 
 ## Citation
 
@@ -143,8 +144,3 @@ Each step has its own README; all commands run from the repository root.
   year      = {2026}
 }
 ```
-
-## License
-
-The code is released under the Apache 2.0 license (`LICENSE`).
-The data on Hugging Face is released under CC BY 4.0, except the HvM images, which keep their original terms.
